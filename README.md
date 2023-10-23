@@ -19,7 +19,7 @@ Primeiramente o seu computador deverá ter o python instalado para que funcione.
 Após isso precisaremos clonar o repositório ou baixar os arquivos, se caso for clonar, utilize o seguinte código:
 
 ```
-git clone <link>
+git clone https://github.com/Thales-Gabriel42/TermoGamePy.git
 ```
 
 Depois de baixar ou clonar, basta executar o arquivo `main.pyw` e a janela do jogo se abrirá.
