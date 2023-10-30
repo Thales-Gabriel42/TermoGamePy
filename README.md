@@ -24,4 +24,4 @@ git clone https://github.com/Thales-Gabriel42/TermoGamePy.git
 Depois de baixar ou clonar, basta executar o arquivo `main.pyw` e a janela do jogo se abrirá.
 
 ### Observações
-Caso queria testar o jogo nos modos de 5 ou 6 letras, abra o projeto com o VSCode, ou se preferir apenas o arquivo `main.pyw` em um editor de textos, e na linha 17 mude o valor da variável 'mode' para 5 ou 6.
+Caso queria testar o jogo nos modos de 5 ou 6 letras, abra o projeto com o VSCode, ou se preferir apenas o arquivo `game.py` em um editor de textos, e na linha 24 mude o valor da variável 'self.mode' para 5 ou 6.
