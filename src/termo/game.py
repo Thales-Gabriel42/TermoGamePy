@@ -4,10 +4,9 @@ from tkinter import messagebox
 
 
 class Game(tk.Frame):
-    def __init__(self, parent, w, h):
+    def __init__(self, parent, w, h, _menu):
         tk.Frame.__init__(self, parent)
         self.config(width=w, height=h, bg="gray25")
-        self.nome = "TermoGamePy"
         self.ignoreChar = [38, 40, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 96, 97, 98, 99,
                            100, 101, 102, 103, 104, 105, 106, 107, 109, 110, 111, 112,
                            113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 186,
@@ -25,9 +24,12 @@ class Game(tk.Frame):
         self.chances = 7
         self.cont = {}
         self.color = None
+        self.menu = _menu
+
+        tk.Button(self, text='Menu', command=self.muda_tela).place(x=0, y=0)
+
         self.define_word()
         self.create_board()
-        print(self.palavra)
 
     def place_keyboard(self):
         fW = self.frmKeyBoard.cget("width")
@@ -45,7 +47,8 @@ class Game(tk.Frame):
                 iX += int(lWidth+5)
 
             if (i == 1):
-                t = tk.Label(self.frmKeyBoard, bg="gray", text="⌫", font=("Arial", 15))
+                t = tk.Label(self.frmKeyBoard, bg="gray",
+                             text="⌫", font=("Arial", 15))
                 t.place(x=iX, y=iY, width=lWidth, height=lHeight)
             if (i == 2):
                 t = tk.Label(self.frmKeyBoard, bg="gray", text="ENTER")
@@ -79,20 +82,21 @@ class Game(tk.Frame):
                         self.cont[self.entries[self.linha][i].get()] -= 1
                         for k in self.frmKeyBoard.children:
                             if self.frmKeyBoard.children[k].cget("text") == self.palavra[i]:
-                                self.frmKeyBoard.children[k].config(bg="SpringGreen2")
+                                self.frmKeyBoard.children[k].config(
+                                    bg="SpringGreen2")
 
         for i in range(0, self.mode):
-            if self.entries[self.linha][i].get() in self.palavra and self.entries[self.linha][i].cget("disabledbackground") != "SpringGreen2" and self.cont[self.entries[self.linha][i].get()] != 0:  # AQ
+            if self.entries[self.linha][i].get() in self.palavra and self.entries[self.linha][i].cget("disabledbackground") != "SpringGreen2" and self.cont[self.entries[self.linha][i].get()] != 0:
                 self.entries[self.linha][i].config(
                     disabledbackground="RoyalBlue2")
                 self.cont[self.entries[self.linha][i].get()] -= 1
             for k in self.frmKeyBoard.children:
                 # if type(self.children[k]) is tk.Label:
-                    if self.frmKeyBoard.children[k].cget("text") in self.palavra:
-                        if self.frmKeyBoard.children[k].cget("text") == self.entries[self.linha][i].get() and self.frmKeyBoard.children[k].cget("bg") != "SpringGreen2":
-                            self.frmKeyBoard.children[k].config(bg="RoyalBlue2")
-                    elif self.frmKeyBoard.children[k].cget("text") == self.entries[self.linha][i].get():
-                        self.frmKeyBoard.children[k].config(bg="firebrick2")
+                if self.frmKeyBoard.children[k].cget("text") in self.palavra:
+                    if self.frmKeyBoard.children[k].cget("text") == self.entries[self.linha][i].get() and self.frmKeyBoard.children[k].cget("bg") != "SpringGreen2":
+                        self.frmKeyBoard.children[k].config(bg="RoyalBlue2")
+                elif self.frmKeyBoard.children[k].cget("text") == self.entries[self.linha][i].get():
+                    self.frmKeyBoard.children[k].config(bg="firebrick2")
 
         for i in range(0, self.mode):
             if self.entries[self.linha][i].cget("disabledbackground") == "SpringGreen2":
@@ -190,7 +194,7 @@ class Game(tk.Frame):
                     self.frmKeyBoard.children[k].config(bg="SpringGreen2")
         elif event.keycode == 13:
             for k in self.frmKeyBoard.children:
-                if self.frmKeyBoard.children[k].cget("text")== "ENTER":
+                if self.frmKeyBoard.children[k].cget("text") == "ENTER":
                     self.frmKeyBoard.children[k].config(bg="SpringGreen2")
         else:
             for k in self.frmKeyBoard.children:
@@ -241,3 +245,7 @@ class Game(tk.Frame):
                 xP += place
             xP = int((tW - (place * self.mode))/2)
             yP += place
+
+    def muda_tela(self):
+        self.place_forget()
+        self.menu.place(x=0, y=0)
