@@ -22,6 +22,7 @@ class Game(tk.Frame):
         self.entries = []
         self.mode = 4
         self.chances = 7
+        self.proceed = True
         self.cont = {}
         self.color = None
         self.menu = _menu
@@ -102,27 +103,32 @@ class Game(tk.Frame):
             if self.entries[self.linha][i].cget("disabledbackground") == "SpringGreen2":
                 corretas += 1
 
-        if corretas == self.mode and self.linha < self.chances:
+        if corretas == self.mode and self.linha < self.chances-1:
             self.acertou = True
             messagebox.showinfo("Acertou", "Parabéns você acertou a palavra!")
-        elif not self.acertou and self.linha == self.chances:
+        elif not self.acertou and self.linha == self.chances-1:
+            self.atualizar_board(True)
             messagebox.showinfo("Acabaram as chances",
-                                "Que pena, suas chances acabaram!")
+                                f"Que pena, suas chances acabaram! A palavra era {self.palavra}.")
 
-    def atualizar_board(self):
-        self.verificar_letras()
-        if not self.acertou and self.linha < self.chances:
+    def atualizar_board(self, lastLine=False):
+        # self.verificar_letras()
+        if lastLine:
             for e in self.entries[self.linha]:
                 e.config(state="disabled")
-            self.linha += 1
-            if self.linha < self.chances:
-                for e in self.entries[self.linha]:
-                    e.config(state="normal")
-                self.entries[self.linha][0].focus()
-            self.reset_count()
         else:
-            for e in self.entries[self.linha]:
-                e.config(state="disabled")
+            if not self.acertou and self.linha < self.chances:
+                for e in self.entries[self.linha]:
+                    e.config(state="disabled")
+                self.linha += 1
+                if self.linha < self.chances:
+                    for e in self.entries[self.linha]:
+                        e.config(state="normal")
+                    self.entries[self.linha][0].focus()
+                self.reset_count()
+            else:
+                for e in self.entries[self.linha]:
+                    e.config(state="disabled")
 
     def backspace_press(self, event):
         self.key_pressed(event)
@@ -169,8 +175,8 @@ class Game(tk.Frame):
             for k in self.frmKeyBoard.children:
                 if self.frmKeyBoard.children[k].cget("text") == "⌫":
                     self.frmKeyBoard.children[k].config(bg="gray50")
-        elif event.keycode == 13:
-            proceed = False if self.linha == self.chances else True
+        elif event.keycode == 13 and self.proceed:
+            self.proceed = False if self.linha == self.chances-1 else True
             allLetters = True
             if self.linha < self.chances:
                 for i in self.entries[self.linha]:
@@ -179,13 +185,10 @@ class Game(tk.Frame):
                 for k in self.frmKeyBoard.children:
                     if self.frmKeyBoard.children[k].cget("text") == "ENTER":
                         self.frmKeyBoard.children[k].config(bg="gray50")
-                if proceed and self.linha <= self.chances and not self.acertou and allLetters:
+                self.verificar_letras()
+                if self.proceed and self.linha <= self.chances-1 and not self.acertou and allLetters:
                     self.reset_count()
                     self.atualizar_board()
-            else:
-                pass
-        else:
-            pass
 
     def key_pressed(self, event):
         if event.keycode == 8:
