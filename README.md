@@ -1,27 +1,39 @@
 # TermoGamePy
 
-Este projeto é um clone do jogo Termo feito em python para treinar minhas habilidades em programação no meu tempo livre. O projeto ainda está em desenvolvimento, o código será refatorado e reestruturado para um melhor resultado conforme meus estudos na linguagem avançarem.
+TermoGamePy é um clone do jogo Termo feito em python utilizando Programação Orientada a Objetos para treinar minhas habilidades em programação.
 
-### Observações
-No momento o jogo funciona normalmente, com palavras de 4, 5 ou 6 letras, porém o modo de jogo só pode ser mudado pelo código, e ao acertar a palavra ou quando as tentativas terminam o jogo precisa ser fechado e aberto novamente para jogar de novo, as próximas melhorias serão focadas nessa parte, criar um menu para a escolha do modo de jogo e a opção de jogar novamente.
+Obs: O projeto ainda está em desenvolvimento, o código será refatorado e reestruturado para um melhor resultado conforme meus estudos na linguagem avançarem. Tenho como objetivo em futuras melhorias o design das telas e 
 
-#
-# Tecnologias
+# Tecnologias 
 
-O projeto foi desenvolvido utilizando a linguagem Python com a biblioteca Tkinter para a criação de janelas.
+- Python.
+- Biblioteca Tkinter.
+- Visual Studio Code.
 
-#
+## Banco de Dados:
+- As palavras estão armazenadas da pasta data, que foi usada como um banco de dados.
 
-# Como utilizar:
-Primeiramente o seu computador deverá ter o python instalado para que funcione. 
-
-Após isso precisaremos clonar o repositório ou baixar os arquivos, se caso for clonar, utilize o seguinte código:
+# Como Usar
+Clone este repositório:
 
 ```
 git clone https://github.com/Thales-Gabriel42/TermoGamePy.git
 ```
+Depois de baixar ou clonar, basta executar o arquivo main.py e a janela do jogo se abrirá.
 
-Depois de baixar ou clonar, basta executar o arquivo `main.pyw` e a janela do jogo se abrirá.
+# Mídias:
+<div align="center">
+<img src="https://github.com/Thales-Gabriel42/TermoGamePy/assets/71100548/58341b29-a7c5-4d40-837b-e838520a7e76" width="650px" />
+</div>
 
-### Observações
-Caso queria testar o jogo nos modos de 5 ou 6 letras, abra o projeto com o VSCode, ou se preferir apenas o arquivo `game.py` em um editor de textos, e na linha 24 mude o valor da variável 'self.mode' para 5 ou 6.
+<div align="center">
+<img src="https://github.com/Thales-Gabriel42/TermoGamePy/assets/71100548/ce5e90dd-2cbb-47c4-ba8e-8d350cce6351" width="650px" />
+</div>
+
+<div align="center">
+<img src="https://github.com/Thales-Gabriel42/TermoGamePy/assets/71100548/9744c226-b5af-40ad-a7b6-06f76dfc1ab6" width="650px" />
+</div>
+
+<div align="center">
+<img src="https://github.com/Thales-Gabriel42/TermoGamePy/assets/71100548/ead2d221-dadb-455c-b2eb-d0c0f624d3e5" width="650px" />
+</div>
