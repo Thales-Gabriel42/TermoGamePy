@@ -23,7 +23,12 @@ class Game(tk.Frame):
         self.entries = []
         self.mode = _mode
         self.chances = 7
+<<<<<<< HEAD
         self.count = {}
+=======
+        self.proceed = True
+        self.cont = {}
+>>>>>>> d4fc9f1b276f69dcb4b90fe8fad3ceca99f04770
         self.color = None
         self.menu = _menu
         self.proceed = True
@@ -109,6 +114,7 @@ class Game(tk.Frame):
             messagebox.showinfo("Out of chances",
                                 "What a shame! You are out of chances.")
 
+<<<<<<< HEAD
     def update_board(self):
         self.verify_letters()
         if not self.isRight and self.row < self.chances:
@@ -123,6 +129,34 @@ class Game(tk.Frame):
         else:
             for e in self.entries[self.row]:
                 e.config(state="disabled")
+=======
+        if corretas == self.mode and self.linha < self.chances-1:
+            self.acertou = True
+            messagebox.showinfo("Acertou", "Parabéns você acertou a palavra!")
+        elif not self.acertou and self.linha == self.chances-1:
+            self.atualizar_board(True)
+            messagebox.showinfo("Acabaram as chances",
+                                f"Que pena, suas chances acabaram! A palavra era {self.palavra}.")
+
+    def atualizar_board(self, lastLine=False):
+        # self.verificar_letras()
+        if lastLine:
+            for e in self.entries[self.linha]:
+                e.config(state="disabled")
+        else:
+            if not self.acertou and self.linha < self.chances:
+                for e in self.entries[self.linha]:
+                    e.config(state="disabled")
+                self.linha += 1
+                if self.linha < self.chances:
+                    for e in self.entries[self.linha]:
+                        e.config(state="normal")
+                    self.entries[self.linha][0].focus()
+                self.reset_count()
+            else:
+                for e in self.entries[self.linha]:
+                    e.config(state="disabled")
+>>>>>>> d4fc9f1b276f69dcb4b90fe8fad3ceca99f04770
 
     def backspace_press(self, event):
         if self.proceed:
@@ -136,7 +170,69 @@ class Game(tk.Frame):
                         event.widget) - 1].focus()
 
     def key_released(self, event):
+<<<<<<< HEAD
         if self.proceed:
+=======
+        for k in self.frmKeyBoard.children:
+            if self.frmKeyBoard.children[k].cget("text") == event.char.upper():
+                self.frmKeyBoard.children[k].config(bg=self.color)
+        if event.keycode >= 65 and event.keycode <= 90 or event.keycode == 39 or event.keycode == 37:
+            if len(event.widget.get()) == 1 and event.keycode != 32 and event.keycode != 39 and event.keycode != 37:
+                for k in self.varTxt.keys():
+                    if event.widget.winfo_name() == k:
+                        self.varTxt[k].set(self.varTxt[k].get().upper())
+                        if self.entries[self.linha].index(event.widget) < self.mode-1:
+                            self.entries[self.linha][self.entries[self.linha].index(
+                                event.widget) + 1].focus()
+            elif event.keycode == 39 and self.entries[self.linha].index(event.widget) < self.mode-1:
+                self.entries[self.linha][self.entries[self.linha].index(
+                    event.widget) + 1].focus()
+            elif event.keycode == 37 and self.entries[self.linha].index(event.widget) > 0:
+                self.entries[self.linha][self.entries[self.linha].index(
+                    event.widget) - 1].focus()
+            else:
+                txt = event.widget.get()[0:1].upper()
+                for k in self.varTxt.keys():
+                    if event.widget.winfo_name() == k:
+                        self.varTxt[k].set(txt)
+                if self.entries[self.linha].index(event.widget) < self.mode-1 and event.keycode != 37:
+                    self.entries[self.linha][self.entries[self.linha].index(
+                        event.widget) + 1].focus()
+        elif (event.widget.get() == " ") or (event.keycode in self.ignoreChar):
+            txt = ""
+            for k in self.varTxt.keys():
+                if event.widget.winfo_name() == k:
+                    self.varTxt[k].set(txt)
+        elif event.keycode == 8:
+            for k in self.frmKeyBoard.children:
+                if self.frmKeyBoard.children[k].cget("text") == "⌫":
+                    self.frmKeyBoard.children[k].config(bg="gray50")
+        elif event.keycode == 13 and self.proceed:
+            self.proceed = False if self.linha == self.chances-1 else True
+            allLetters = True
+            if self.linha < self.chances:
+                for i in self.entries[self.linha]:
+                    if i.get() == "":
+                        allLetters = False
+                for k in self.frmKeyBoard.children:
+                    if self.frmKeyBoard.children[k].cget("text") == "ENTER":
+                        self.frmKeyBoard.children[k].config(bg="gray50")
+                self.verificar_letras()
+                if self.proceed and self.linha <= self.chances-1 and not self.acertou and allLetters:
+                    self.reset_count()
+                    self.atualizar_board()
+
+    def key_pressed(self, event):
+        if event.keycode == 8:
+            for k in self.frmKeyBoard.children:
+                if self.frmKeyBoard.children[k].cget("text") == "⌫":
+                    self.frmKeyBoard.children[k].config(bg="SpringGreen2")
+        elif event.keycode == 13:
+            for k in self.frmKeyBoard.children:
+                if self.frmKeyBoard.children[k].cget("text") == "ENTER":
+                    self.frmKeyBoard.children[k].config(bg="SpringGreen2")
+        else:
+>>>>>>> d4fc9f1b276f69dcb4b90fe8fad3ceca99f04770
             for k in self.frmKeyBoard.children:
                 if self.frmKeyBoard.children[k].cget("text") == event.char.upper():
                     self.frmKeyBoard.children[k].config(bg=self.color)
