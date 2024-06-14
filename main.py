@@ -10,7 +10,7 @@ if __name__ == '__main__':
     y = round((root.winfo_screenheight() - height)/2)
     root.title("TermoGamePy")
     root.geometry(f"{width}x{height}+{x}+{y}")
-    root.resizable(0, 0)
+    root.resizable(False, False)
     app = Menu(root, 800, 900)
     app.place(x=0, y=0)
     root.mainloop()
