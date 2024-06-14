@@ -1,10 +1,11 @@
 import tkinter as tk
 from random import randint
 from tkinter import messagebox
+import os, sys
 
 
 class Game(tk.Frame):
-    def __init__(self, parent, w, h, _menu):
+    def __init__(self, parent, w, h, _menu, _mode):
         tk.Frame.__init__(self, parent)
         self.config(width=w, height=h, bg="gray25")
         self.ignoreChar = [38, 40, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 96, 97, 98, 99,
@@ -15,18 +16,19 @@ class Game(tk.Frame):
             "ASDFGHJKL"), list("ZXCVBNM")]
         self._width = w
         self._height = h
-        self.palavra = ""
-        self.acertou = False
+        self.word = ""
+        self.isRight = False
         self.varTxt = {}
-        self.linha = 0
+        self.row = 0
         self.entries = []
-        self.mode = 4
+        self.mode = _mode
         self.chances = 7
-        self.cont = {}
+        self.count = {}
         self.color = None
         self.menu = _menu
+        self.proceed = True
 
-        tk.Button(self, text='Menu', command=self.muda_tela).place(x=0, y=0)
+        tk.Button(self, text='Menu', command=self.screen_change).place(x=0, y=0)
 
         self.define_word()
         self.create_board()
@@ -60,147 +62,148 @@ class Game(tk.Frame):
             i += 1
 
     def define_word(self):
-        path = ".\\src\\data\\" + str(self.mode) + "letras.txt"
+        path = self.resource_path(".\\src\\termo\\data\\" + str(self.mode) + "letters.txt")
         words = []
         with open(path, 'r') as file:
-            for letra in file:
-                words.append(letra.strip())
-            self.palavra = words[randint(0, len(words))].upper()
-
+            for word in file:
+                words.append(word.strip())
+            self.word = words[randint(0, len(words))]
+            
     def reset_count(self):
-        for letra in self.palavra:
-            self.cont[letra] = self.palavra.count(letra)
+        for letter in self.word:
+            self.count[letter] = self.word.count(letter)
 
-    def verificar_letras(self):
-        corretas = 0
+    def verify_letters(self):
+        rightLetters = 0
         for i in range(0, self.mode):
-            if self.entries[self.linha][i].get() in self.cont.keys():
-                if self.cont[self.entries[self.linha][i].get()] > 0:
-                    if self.entries[self.linha][i].get() == self.palavra[i]:
-                        self.entries[self.linha][i].config(
+            if self.entries[self.row][i].get() in self.count.keys():
+                if self.count[self.entries[self.row][i].get()] > 0:
+                    if self.entries[self.row][i].get() == self.word[i]:
+                        self.entries[self.row][i].config(
                             disabledbackground="SpringGreen2")
-                        self.cont[self.entries[self.linha][i].get()] -= 1
+                        self.count[self.entries[self.row][i].get()] -= 1
                         for k in self.frmKeyBoard.children:
-                            if self.frmKeyBoard.children[k].cget("text") == self.palavra[i]:
+                            if self.frmKeyBoard.children[k].cget("text") == self.word[i]:
                                 self.frmKeyBoard.children[k].config(
                                     bg="SpringGreen2")
 
         for i in range(0, self.mode):
-            if self.entries[self.linha][i].get() in self.palavra and self.entries[self.linha][i].cget("disabledbackground") != "SpringGreen2" and self.cont[self.entries[self.linha][i].get()] != 0:
-                self.entries[self.linha][i].config(
+            if self.entries[self.row][i].get() in self.word and self.entries[self.row][i].cget("disabledbackground") != "SpringGreen2" and self.count[self.entries[self.row][i].get()] != 0:
+                self.entries[self.row][i].config(
                     disabledbackground="RoyalBlue2")
-                self.cont[self.entries[self.linha][i].get()] -= 1
+                self.count[self.entries[self.row][i].get()] -= 1
             for k in self.frmKeyBoard.children:
-                # if type(self.children[k]) is tk.Label:
-                if self.frmKeyBoard.children[k].cget("text") in self.palavra:
-                    if self.frmKeyBoard.children[k].cget("text") == self.entries[self.linha][i].get() and self.frmKeyBoard.children[k].cget("bg") != "SpringGreen2":
+                if self.frmKeyBoard.children[k].cget("text") in self.word:
+                    if self.frmKeyBoard.children[k].cget("text") == self.entries[self.row][i].get() and self.frmKeyBoard.children[k].cget("bg") != "SpringGreen2":
                         self.frmKeyBoard.children[k].config(bg="RoyalBlue2")
-                elif self.frmKeyBoard.children[k].cget("text") == self.entries[self.linha][i].get():
+                elif self.frmKeyBoard.children[k].cget("text") == self.entries[self.row][i].get():
                     self.frmKeyBoard.children[k].config(bg="firebrick2")
 
         for i in range(0, self.mode):
-            if self.entries[self.linha][i].cget("disabledbackground") == "SpringGreen2":
-                corretas += 1
+            if self.entries[self.row][i].cget("disabledbackground") == "SpringGreen2":
+                rightLetters += 1
+        if rightLetters == self.mode and self.row < self.chances:
+            self.isRight = True
+            messagebox.showinfo("Congratulations", "Congratulations! The word is correct!")
+        elif not self.isRight and self.row == self.chances-1:
+            messagebox.showinfo("Out of chances",
+                                "What a shame! You are out of chances.")
 
-        if corretas == self.mode and self.linha < self.chances:
-            self.acertou = True
-            messagebox.showinfo("Acertou", "Parabéns você acertou a palavra!")
-        elif not self.acertou and self.linha == self.chances:
-            messagebox.showinfo("Acabaram as chances",
-                                "Que pena, suas chances acabaram!")
-
-    def atualizar_board(self):
-        self.verificar_letras()
-        if not self.acertou and self.linha < self.chances:
-            for e in self.entries[self.linha]:
+    def update_board(self):
+        self.verify_letters()
+        if not self.isRight and self.row < self.chances:
+            for e in self.entries[self.row]:
                 e.config(state="disabled")
-            self.linha += 1
-            if self.linha < self.chances:
-                for e in self.entries[self.linha]:
+            self.row += 1
+            if self.row < self.chances:
+                for e in self.entries[self.row]:
                     e.config(state="normal")
-                self.entries[self.linha][0].focus()
-            self.reset_count()
+                self.entries[self.row][0].focus()
+            self.reset_count()              
         else:
-            for e in self.entries[self.linha]:
+            for e in self.entries[self.row]:
                 e.config(state="disabled")
 
     def backspace_press(self, event):
-        self.key_pressed(event)
-        if event.widget.get() == "" and self.entries[self.linha].index(event.widget) > 0:
-            self.entries[self.linha][self.entries[self.linha].index(
-                event.widget) - 1].focus()
-        else:
-            if self.entries[self.linha].index(event.widget) > 0:
-                self.entries[self.linha][self.entries[self.linha].index(
+        if self.proceed:
+            self.key_pressed(event)
+            if event.widget.get() == "" and self.entries[self.row].index(event.widget) > 0:
+                self.entries[self.row][self.entries[self.row].index(
                     event.widget) - 1].focus()
+            else:
+                if self.entries[self.row].index(event.widget) > 0:
+                    self.entries[self.row][self.entries[self.row].index(
+                        event.widget) - 1].focus()
 
     def key_released(self, event):
-        for k in self.frmKeyBoard.children:
-            if self.frmKeyBoard.children[k].cget("text") == event.char.upper():
-                self.frmKeyBoard.children[k].config(bg=self.color)
-        if event.keycode >= 65 and event.keycode <= 90 or event.keycode == 39 or event.keycode == 37:
-            if len(event.widget.get()) == 1 and event.keycode != 32 and event.keycode != 39 and event.keycode != 37:
-                for k in self.varTxt.keys():
-                    if event.widget.winfo_name() == k:
-                        self.varTxt[k].set(self.varTxt[k].get().upper())
-                        if self.entries[self.linha].index(event.widget) < self.mode-1:
-                            self.entries[self.linha][self.entries[self.linha].index(
-                                event.widget) + 1].focus()
-            elif event.keycode == 39 and self.entries[self.linha].index(event.widget) < self.mode-1:
-                self.entries[self.linha][self.entries[self.linha].index(
-                    event.widget) + 1].focus()
-            elif event.keycode == 37 and self.entries[self.linha].index(event.widget) > 0:
-                self.entries[self.linha][self.entries[self.linha].index(
-                    event.widget) - 1].focus()
-            else:
-                txt = event.widget.get()[0:1].upper()
-                for k in self.varTxt.keys():
-                    if event.widget.winfo_name() == k:
-                        self.varTxt[k].set(txt)
-                if self.entries[self.linha].index(event.widget) < self.mode-1 and event.keycode != 37:
-                    self.entries[self.linha][self.entries[self.linha].index(
-                        event.widget) + 1].focus()
-        elif (event.widget.get() == " ") or (event.keycode in self.ignoreChar):
-            txt = ""
-            for k in self.varTxt.keys():
-                if event.widget.winfo_name() == k:
-                    self.varTxt[k].set(txt)
-        elif event.keycode == 8:
-            for k in self.frmKeyBoard.children:
-                if self.frmKeyBoard.children[k].cget("text") == "⌫":
-                    self.frmKeyBoard.children[k].config(bg="gray50")
-        elif event.keycode == 13:
-            proceed = False if self.linha == self.chances else True
-            allLetters = True
-            if self.linha < self.chances:
-                for i in self.entries[self.linha]:
-                    if i.get() == "":
-                        allLetters = False
-                for k in self.frmKeyBoard.children:
-                    if self.frmKeyBoard.children[k].cget("text") == "ENTER":
-                        self.frmKeyBoard.children[k].config(bg="gray50")
-                if proceed and self.linha <= self.chances and not self.acertou and allLetters:
-                    self.reset_count()
-                    self.atualizar_board()
-            else:
-                pass
-        else:
-            pass
-
-    def key_pressed(self, event):
-        if event.keycode == 8:
-            for k in self.frmKeyBoard.children:
-                if self.frmKeyBoard.children[k].cget("text") == "⌫":
-                    self.frmKeyBoard.children[k].config(bg="SpringGreen2")
-        elif event.keycode == 13:
-            for k in self.frmKeyBoard.children:
-                if self.frmKeyBoard.children[k].cget("text") == "ENTER":
-                    self.frmKeyBoard.children[k].config(bg="SpringGreen2")
-        else:
+        if self.proceed:
             for k in self.frmKeyBoard.children:
                 if self.frmKeyBoard.children[k].cget("text") == event.char.upper():
-                    self.color = self.frmKeyBoard.children[k].cget("bg")
-                    self.frmKeyBoard.children[k].config(bg="SpringGreen3")
+                    self.frmKeyBoard.children[k].config(bg=self.color)
+            if event.keycode >= 65 and event.keycode <= 90 or event.keycode == 39 or event.keycode == 37:
+                if len(event.widget.get()) == 1 and event.keycode != 32 and event.keycode != 39 and event.keycode != 37:
+                    for k in self.varTxt.keys():
+                        if event.widget.winfo_name() == k:
+                            self.varTxt[k].set(self.varTxt[k].get().upper())
+                            if self.entries[self.row].index(event.widget) < self.mode-1:
+                                self.entries[self.row][self.entries[self.row].index(
+                                    event.widget) + 1].focus()
+                elif event.keycode == 39 and self.entries[self.row].index(event.widget) < self.mode-1:
+                    self.entries[self.row][self.entries[self.row].index(
+                        event.widget) + 1].focus()
+                elif event.keycode == 37 and self.entries[self.row].index(event.widget) > 0:
+                    self.entries[self.row][self.entries[self.row].index(
+                        event.widget) - 1].focus()
+                else:
+                    txt = event.widget.get()[0:1].upper()
+                    for k in self.varTxt.keys():
+                        if event.widget.winfo_name() == k:
+                            self.varTxt[k].set(txt)
+                    if self.entries[self.row].index(event.widget) < self.mode-1 and event.keycode != 37:
+                        self.entries[self.row][self.entries[self.row].index(
+                            event.widget) + 1].focus()
+            elif (event.widget.get() == " ") or (event.keycode in self.ignoreChar):
+                txt = ""
+                for k in self.varTxt.keys():
+                    if event.widget.winfo_name() == k:
+                        self.varTxt[k].set(txt) 
+            elif event.keycode == 8:
+                for k in self.frmKeyBoard.children:
+                    if self.frmKeyBoard.children[k].cget("text") == "⌫":
+                        self.frmKeyBoard.children[k].config(bg="gray50")
+            elif event.keycode == 13:
+                self.proceed = False if self.row == self.chances else True
+                allLetters = True
+                if self.row < self.chances:
+                    for i in self.entries[self.row]:
+                        if i.get() == "":
+                            allLetters = False
+                    for k in self.frmKeyBoard.children:
+                        if self.frmKeyBoard.children[k].cget("text") == "ENTER":
+                            self.frmKeyBoard.children[k].config(bg="gray50")
+                    if self.proceed and self.row <= self.chances and not self.isRight and allLetters:
+                        self.reset_count()
+                        self.update_board()
+                else:
+                    pass
+            else:
+                pass
+
+    def key_pressed(self, event):
+        if self.proceed:
+            if event.keycode == 8:
+                for k in self.frmKeyBoard.children:
+                    if self.frmKeyBoard.children[k].cget("text") == "⌫":
+                        self.frmKeyBoard.children[k].config(bg="SpringGreen2")
+            elif event.keycode == 13:
+                for k in self.frmKeyBoard.children:
+                    if self.frmKeyBoard.children[k].cget("text") == "ENTER":
+                        self.frmKeyBoard.children[k].config(bg="SpringGreen2")
+            else:
+                for k in self.frmKeyBoard.children:
+                    if self.frmKeyBoard.children[k].cget("text") == event.char.upper():
+                        self.color = self.frmKeyBoard.children[k].cget("bg")
+                        self.frmKeyBoard.children[k].config(bg="SpringGreen3")
 
     def create_board(self):
         entWid = 70
@@ -246,6 +249,15 @@ class Game(tk.Frame):
             xP = int((tW - (place * self.mode))/2)
             yP += place
 
-    def muda_tela(self):
+    def screen_change(self):
         self.place_forget()
         self.menu.place(x=0, y=0)
+
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)
