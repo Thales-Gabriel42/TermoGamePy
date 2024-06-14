@@ -106,4 +106,5 @@ GitHub.sublime-settings
 .history
 
 # Other files
-anotacoes.txt
+backup*.txt
+.mypy_cache/
