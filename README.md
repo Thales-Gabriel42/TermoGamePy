@@ -2,7 +2,7 @@
 
 TermoGamePy é um clone do jogo Termo feito em python utilizando Programação Orientada a Objetos para treinar minhas habilidades em programação.
 
-Obs: O projeto ainda está em desenvolvimento, o código será refatorado e reestruturado para um melhor resultado conforme meus estudos na linguagem avançarem. Tenho como objetivo em futuras melhorias o design das telas e 
+Obs: O projeto ainda está em desenvolvimento, o código será refatorado e reestruturado para um melhor resultado conforme meus estudos na linguagem avançarem. Tenho como objetivo em futuras melhorias o design das telas e funcionalidades.
 
 # Tecnologias 
 
