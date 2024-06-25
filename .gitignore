@@ -106,5 +106,5 @@ GitHub.sublime-settings
 .history
 
 # Other files
-backup*.txt
+Testes/
 .mypy_cache/
