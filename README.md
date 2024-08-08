@@ -11,9 +11,11 @@ Obs: O projeto ainda está em desenvolvimento, o código será refatorado e rees
 - Visual Studio Code.
 
 ## Banco de Dados:
-- As palavras estão armazenadas da pasta data, que foi usada como um banco de dados.
+- As palavras estão armazenadas em arquivos de texto dentro da pasta data.
 
 # Como Usar
+OBS: Para conseguir executar o programa, é necessário ter o Python3.
+
 Clone este repositório:
 
 ```
